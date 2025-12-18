@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content="MyNotes - A modern note-taking app for organizing your thoughts">
+  <meta name="theme-color" content="#6366f1">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <title>MyNotes - Organize Your Thoughts</title>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1><i class="fas fa-sticky-note"></i> NOTIX</h1>
+      <div class="theme-toggle" data-tooltip="Toggle Light/Dark Mode">
+        <i class="fas fa-moon"></i>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Authentication forms -->
+    <div id="auth-container" class="auth-container hidden">
+      <div class="auth-tabs">
+        <button id="login-tab" class="active">Login</button>
+        <button id="register-tab">Register</button>
+      </div>
+      
+      <form id="login-form" class="auth-form">
+        <div class="form-group">
+          <label for="login-email">Email</label>
+          <input type="email" id="login-email" required autofocus>
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" required>
+        </div>
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-sign-in-alt"></i> Login
+        </button>
+      </form>
+      
+      <form id="register-form" class="auth-form hidden">
+        <div class="form-group">
+          <label for="register-name">Full Name</label>
+          <input type="text" id="register-name" required>
+        </div>
+        <div class="form-group">
+          <label for="register-email">Email</label>
+          <input type="email" id="register-email" required>
+        </div>
+        <div class="form-group">
+          <label for="register-password">Password</label>
+          <input type="password" id="register-password" required minlength="8">
+          <small class="text-muted">Must be at least 8 characters</small>
+        </div>
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-user-plus"></i> Register
+        </button>
+      </form>
+    </div>
+
+    <!-- Main app content -->
+    <div id="app-container" class="app-container hidden">
+      <div class="app-header">
+        <div class="user-info">
+          <h2>Welcome, <span id="user-name"></span></h2>
+          <button id="logout-btn" class="btn btn-small" data-tooltip="Logout">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+        </div>
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search notes...">
+          <button id="search-btn" class="btn btn-small" data-tooltip="Search Notes">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="notes-container">
+        <div class="sidebar fade-in-up">
+          <button id="new-note-btn" class="btn btn-primary" data-tooltip="Create New Note">
+            <i class="fas fa-plus"></i> New Note
+          </button>
+          <div class="tags-filter">
+            <h3>Filter by Tags</h3>
+            <ul id="tags-list"></ul>
+          </div>
+        </div>
+
+        <div class="notes-list fade-in-up">
+          <h2>Your Notes</h2>
+          <div id="notes-grid"></div>
+        </div>
+
+        <div id="note-detail" class="note-detail hidden">
+          <div class="note-actions">
+            <button id="back-btn" class="btn btn-small" data-tooltip="Back to Notes">
+              <i class="fas fa-arrow-left"></i> Back
+            </button>
+            <button id="edit-note-btn" class="btn btn-small" data-tooltip="Edit Note">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            <button id="delete-note-btn" class="btn btn-small btn-danger" data-tooltip="Delete Note">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </div>
+          <div id="note-view"></div>
+        </div>
+      </div>
+
+      <!-- Note Form Modal -->
+      <div id="note-modal" class="modal hidden">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h2 id="modal-title">Add New Note</h2>
+          <form id="note-form">
+            <input type="hidden" id="note-id">
+            <div class="form-group">
+              <label for="note-title">Title</label>
+              <input type="text" id="note-title" required>
+            </div>
+            <div class="form-group">
+              <label for="note-content">Content (Markdown supported)</label>
+              <textarea id="note-content" rows="10" required></textarea>
+              <div class="note-content-preview" id="note-content-preview"></div>
+            </div>
+            <div class="form-group">
+              <label for="note-tags">Tags (comma separated)</label>
+              <input type="text" id="note-tags" placeholder="work, personal, idea">
+            </div>
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save"></i> Save Note
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <h3>Developed by Purna</h3>
+      <p>&copy; 2025 MyNotes App, All Rights reserved | <a href="#" class="footer-link">Terms</a> | <a href="#" class="footer-link">Privacy</a></p>
+    </div>
+  </footer>
+
+  <!-- Flash Message -->
+  <div id="flash-message" class="flash-message"></div>
+  
+  <!-- Loading Overlay -->
+  <div id="loading-overlay" class="loading-overlay hidden">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Skeleton Loading Template (Hidden) -->
+  <template id="skeleton-template">
+    <div class="skeleton-card">
+      <div class="skeleton-title"></div>
+      <div class="skeleton-content"></div>
+      <div class="skeleton-date"></div>
+      <div class="skeleton-tags">
+        <div class="skeleton-tag"></div>
+        <div class="skeleton-tag"></div>
+      </div>
+    </div>
+  </template>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
